@@ -72,7 +72,7 @@ def read_root():
     return {"Hello": "World"}
 
 @app.post("/todos/", response_model=Todo)
-def create_todo(todo: Todo, current_user: dict = Depends(verify_token), session: Session = Depends(get_session)):
+def create_todo(todo: Todo, current_user: Annotated[User, Depends(verify_token)], session: Session = Depends(get_session)):
         todo.user_id = current_user["id"]
         session.add(todo)
         session.commit()
@@ -80,7 +80,7 @@ def create_todo(todo: Todo, current_user: dict = Depends(verify_token), session:
         return todo
 
 @app.get("/todos/", response_model=list[Todo])
-def read_todos(current_user: dict = Depends(verify_token), session: Session = Depends(get_session)):
+def read_todos(current_user: Annotated[User, Depends(verify_token)], session: Session = Depends(get_session)):
     user_id = current_user["id"]
 
     if current_user is None:
